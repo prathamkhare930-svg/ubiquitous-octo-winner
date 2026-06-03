@@ -1,10 +1,5 @@
 function Home() {
-  return (
-    <div>
-      <h1>FitConnect AI</h1>
-      <p>Find gym partners and achieve your goals together.</p>
-    </div>
-  );
+  return <h1>Home Page</h1>;
 }
 
 export default Home;
