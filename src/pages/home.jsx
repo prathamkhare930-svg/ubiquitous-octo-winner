@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { FeatureCard } from "../components/featurecard";
 
 function Home() {
   const navigate = useNavigate();
@@ -19,14 +20,10 @@ function Home() {
           Get Started
         </button>
         </div>
-         <div className="mt-16 text-center">
-        <h2 className="mt-16 text-4xl text-amber-300">why fit connect ai?</h2>
-        <p className="mt-4 text-lg text-gray-300">
-          find gym partner nearby </p>
-          <p className="mt-4 text-lg text-gray-300">
-          track your workout and progress </p>
-          <p className="mt-4 text-lg text-gray-300">
-          stay consistent and motivated </p>
+         <div className=" flex gap-6 mt-16 text-center">
+        {FeatureCard({ title: "Find Gym Partners" , emoji: "🤖" })}
+        {FeatureCard({ title: "Track Your Workouts" , emoji: "💪" })}
+        {FeatureCard({ title: "Stay Motivated" , emoji: "🔥" })}
 
       </div>
     </div>
