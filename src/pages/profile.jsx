@@ -1,5 +1,5 @@
 import { useNavigate} from "react-router-dom";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 function Profile() {
   const navigate = useNavigate();
   const [fitnessLevel, setFitnessLevel] = useState("");
@@ -9,11 +9,24 @@ function Profile() {
     navigate('/login');
   }
   const handleSave = () => {
+    localStorage.setItem('fitnessLevel', fitnessLevel);
+    localStorage.setItem('goal', goal);
     console.log({
-      fitnessLevel, 
-      goal
+      fitnessLevel: localStorage.getItem('fitnessLevel'),
+      goal: localStorage.getItem('goal')
     });
   };
+  useEffect(() => {
+    const savedFitnessLevel = localStorage.getItem('fitnessLevel');
+    const savedGoal = localStorage.getItem('goal');
+    if (savedFitnessLevel) {
+      setFitnessLevel(savedFitnessLevel);
+    }
+    if (savedGoal) {
+      setGoal(savedGoal);
+    }
+  }, []);
+
   return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center"><h1 className="text-5xl font-bold text-green-400 text-center mb-6">Profile Page</h1>
   <p className=" text-2xl text-gray-400 mb-6 text-center">
   Tell us about your fitness journey.
