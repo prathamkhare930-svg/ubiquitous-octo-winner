@@ -1,9 +1,11 @@
 import { useNavigate} from "react-router-dom";
 import { useState , useEffect } from "react";
+import {InfoCard} from "../components/InfoCard";
 function Profile() {
   const navigate = useNavigate();
   const [fitnessLevel, setFitnessLevel] = useState("");
   const [goal, setGoal] = useState("");
+  const [city, setCity] = useState("");
 
   const handleLogout = () => {
     navigate('/login');
@@ -11,19 +13,25 @@ function Profile() {
   const handleSave = () => {
     localStorage.setItem('fitnessLevel', fitnessLevel);
     localStorage.setItem('goal', goal);
+    localStorage.setItem('city', city);
     console.log({
       fitnessLevel: localStorage.getItem('fitnessLevel'),
-      goal: localStorage.getItem('goal')
+      goal: localStorage.getItem('goal'),
+      city: localStorage.getItem('city')
     });
   };
   useEffect(() => {
     const savedFitnessLevel = localStorage.getItem('fitnessLevel');
     const savedGoal = localStorage.getItem('goal');
+    const savedCity = localStorage.getItem('city');
     if (savedFitnessLevel) {
       setFitnessLevel(savedFitnessLevel);
     }
     if (savedGoal) {
       setGoal(savedGoal);
+    }
+    if (savedCity) {
+      setCity(savedCity);
     }
   }, []);
 
@@ -44,14 +52,23 @@ function Profile() {
       <option value="advanced">Advanced</option>
     </select> 
 
-     <input 
-    type= "text"
-    placeholder="Goal"
-    className=" mt-4 w-full p-4 bg-gray-700 text-white border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200"
+     <select
+    className="  mt-4 w-full p-4 bg-gray-700 text-white border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200"
     value={goal}
     onChange={(e) => setGoal(e.target.value)}
     >
-    </input>
+      <option value="">Select Goal</option>
+      <option value="lose weight">Lose Weight</option>
+      <option value="build muscle">Build Muscle</option>
+      <option value="maintain fitness">Maintain Fitness</option>
+      <option value="strength training">Strength Training</option>
+    </select>
+
+    < input type = "text" placeholder = "City" className = " mt-4 w-full p-4 bg-gray-700 text-white border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200" value={city} onChange={(e) => setCity(e.target.value)}></input>
+
+    <InfoCard className="bg-amber-50 p-4 rounded-xl" title="Fitness Level" value={fitnessLevel} />
+    <InfoCard className="bg-amber-50 p-4 rounded-xl" title="Goal" value={goal} />
+    <InfoCard  className="bg-amber-50 p-4 rounded-xl" title="City" value={city} />
   </form>
   
  <button
