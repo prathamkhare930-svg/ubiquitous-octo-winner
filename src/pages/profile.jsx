@@ -1,6 +1,7 @@
 import { useNavigate} from "react-router-dom";
 import { useState , useEffect } from "react";
 import {InfoCard} from "../components/InfoCard";
+import PartnerCard from "../components/PartnerCard";
 function Profile() {
   const navigate = useNavigate();
   const [fitnessLevel, setFitnessLevel] = useState("");
@@ -34,6 +35,12 @@ function Profile() {
       setCity(savedCity);
     }
   }, []);
+   
+  const partners = [ 
+    { name: "Alice", fitnessLevel: "Intermediate", goal: "Build Muscle", city: "New York" },
+    { name: "Bob", fitnessLevel: "Beginner", goal: "Lose Weight", city: "Los Angeles" },
+    { name: "Charlie", fitnessLevel: "Advanced", goal: "Maintain Fitness", city: "Chicago" },
+  ];
 
   return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center"><h1 className="text-5xl font-bold text-green-400 text-center mb-6">Profile Page</h1>
   <p className=" text-2xl text-gray-400 mb-6 text-center">
@@ -78,9 +85,17 @@ function Profile() {
 >  Save Profile</button>
   <button type="button" onClick = {handleLogout} className ="w-96 bg-red-600 hover:bg-red-700 p-4 rounded-xl font-semibold transition-all text-white mt-4">
     Logout
- 
- 
 </button>
+<h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
+  {partners.map((partner, index) => (
+  <PartnerCard
+    key={index}
+    name={partner.name}
+    fitnessLevel={partner.fitnessLevel}
+    goal={partner.goal}
+    city={partner.city}
+  />
+))}
    </div>
    ;
 }
