@@ -7,6 +7,7 @@ function Profile() {
   const [fitnessLevel, setFitnessLevel] = useState("");
   const [goal, setGoal] = useState("");
   const [city, setCity] = useState("");
+  const [connectedPartners, setConnectedPartners] = useState("");
 
   const handleLogout = () => {
     navigate('/login');
@@ -35,6 +36,7 @@ function Profile() {
       setCity(savedCity);
     }
   }, []);
+  
    
   const partners = [ 
     { name: "Alice", fitnessLevel: "Intermediate", goal: "Build Muscle", city: "New York" },
@@ -94,8 +96,15 @@ function Profile() {
     fitnessLevel={partner.fitnessLevel}
     goal={partner.goal}
     city={partner.city}
+    isconnected ={connectedPartners=== partner.name}
+    onConnect={() => {
+      setConnectedPartners(partner.name);
+    }}
   />
 ))}
+<p className="text-gray-400 text-center mt-4">
+ Connected with : {connectedPartners || 'No one yet.'}
+</p>
    </div>
    ;
 }
