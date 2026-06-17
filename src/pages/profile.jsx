@@ -8,6 +8,7 @@ function Profile() {
   const [goal, setGoal] = useState("");
   const [city, setCity] = useState("");
   const [connectedPartners, setConnectedPartners] = useState("");
+  const [filterlevel, setFilterLevel] = useState("all");
 
   const handleLogout = () => {
     navigate('/login');
@@ -43,6 +44,8 @@ function Profile() {
     { name: "Bob", fitnessLevel: "Beginner", goal: "Lose Weight", city: "Los Angeles" },
     { name: "Charlie", fitnessLevel: "Advanced", goal: "Maintain Fitness", city: "Chicago" },
   ];
+   const filteredPartners = filterlevel === "all" ? partners : partners.filter(partner => partner.fitnessLevel.toLowerCase() === filterlevel);
+
 
   return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center"><h1 className="text-5xl font-bold text-green-400 text-center mb-6">Profile Page</h1>
   <p className=" text-2xl text-gray-400 mb-6 text-center">
@@ -88,8 +91,22 @@ function Profile() {
   <button type="button" onClick = {handleLogout} className ="w-96 bg-red-600 hover:bg-red-700 p-4 rounded-xl font-semibold transition-all text-white mt-4">
     Logout
 </button>
+<select
+  className="mt-6 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl 
+  focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200"
+  value={filterlevel}
+  onChange={(e) => setFilterLevel(e.target.value)}
+>
+  <option value="all">All Levels</option>
+  <option value="beginner">Beginner</option>
+  <option value="intermediate">Intermediate</option>
+  <option value="advanced">Advanced</option>
+</select>
+
 <h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
-  {partners.map((partner, index) => (
+<div className="flex flex-wrap justify-center gap-6">
+
+      {filteredPartners.map((partner, index) => (
   <PartnerCard
     key={index}
     name={partner.name}
@@ -102,9 +119,11 @@ function Profile() {
     }}
   />
 ))}
+</div>
 <p className="text-gray-400 text-center mt-4">
  Connected with : {connectedPartners || 'No one yet.'}
 </p>
+
    </div>
    ;
 }
