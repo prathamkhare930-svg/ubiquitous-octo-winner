@@ -7,8 +7,9 @@ function Profile() {
   const [fitnessLevel, setFitnessLevel] = useState("");
   const [goal, setGoal] = useState("");
   const [city, setCity] = useState("");
-  const [connectedPartners, setConnectedPartners] = useState("");
+  const [connectedPartners, setConnectedPartners] = useState([]);
   const [filterlevel, setFilterLevel] = useState("all");
+  const [filtercity, setFilterCity] = useState("all");
 
   const handleLogout = () => {
     navigate('/login');
@@ -44,9 +45,20 @@ function Profile() {
     { name: "Bob", fitnessLevel: "Beginner", goal: "Lose Weight", city: "Los Angeles" },
     { name: "Charlie", fitnessLevel: "Advanced", goal: "Maintain Fitness", city: "Chicago" },
   ];
-   const filteredPartners = filterlevel === "all" ? partners : partners.filter(partner => partner.fitnessLevel.toLowerCase() === filterlevel);
+  const filteredPartners =
+  filterlevel === "all"
+    ? partners
+    : partners.filter(
+        (partner) =>
+          partner.fitnessLevel.toLowerCase() === filterlevel
+      );
 
-
+const searchedPartners = filteredPartners.filter(
+  (partner) =>
+    partner.city.toLowerCase().includes(
+      filtercity.toLowerCase()
+    )
+);
   return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center"><h1 className="text-5xl font-bold text-green-400 text-center mb-6">Profile Page</h1>
   <p className=" text-2xl text-gray-400 mb-6 text-center">
   Tell us about your fitness journey.
@@ -103,25 +115,46 @@ function Profile() {
   <option value="advanced">Advanced</option>
 </select>
 
+<input type="text" placeholder="Filter by City"
+  className="mt-6 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl 
+  focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200"
+  value={filtercity}
+  onChange={(e) => setFilterCity(e.target.value)}
+/>
 <h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
 <div className="flex flex-wrap justify-center gap-6">
-
-      {filteredPartners.map((partner, index) => (
-  <PartnerCard
-    key={index}
-    name={partner.name}
-    fitnessLevel={partner.fitnessLevel}
-    goal={partner.goal}
-    city={partner.city}
-    isconnected ={connectedPartners=== partner.name}
-    onConnect={() => {
-      setConnectedPartners(partner.name);
-    }}
-  />
+{searchedPartners.length === 0 && (
+  <p className="text-gray-400 text-center mt-4">
+    No partners found.
+  </p>
+)}
+      {searchedPartners.map((partner, index) => (
+ <PartnerCard
+  key={index}
+  name={partner.name}
+  fitnessLevel={partner.fitnessLevel}
+  goal={partner.goal}
+  city={partner.city}
+  isConnected={connectedPartners.includes(partner.name)}
+  onConnect={() => {
+    if (connectedPartners.includes(partner.name)) {
+      setConnectedPartners(
+        connectedPartners.filter(
+          (name) => name !== partner.name
+        )
+      );
+    } else {
+      setConnectedPartners([
+        ...connectedPartners,
+        partner.name,
+      ]);
+    }
+  }}
+/>
 ))}
 </div>
 <p className="text-gray-400 text-center mt-4">
- Connected with : {connectedPartners || 'No one yet.'}
+ Connected with : {connectedPartners.length > 0 ? connectedPartners.join(', ') : 'No one yet.'}
 </p>
 
    </div>
