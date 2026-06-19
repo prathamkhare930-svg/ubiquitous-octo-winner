@@ -7,7 +7,6 @@ function Profile() {
   const [fitnessLevel, setFitnessLevel] = useState("");
   const [goal, setGoal] = useState("");
   const [city, setCity] = useState("");
-  const [connectedPartners, setConnectedPartners] = useState([]);
   const [filterlevel, setFilterLevel] = useState("all");
   const [filtercity, setFilterCity] = useState("all");
 
@@ -38,8 +37,17 @@ function Profile() {
       setCity(savedCity);
     }
   }, []);
-  
-   
+const [connectedPartners, setConnectedPartners] = useState(() => {
+  return JSON.parse(localStorage.getItem("connectedPartners")) || [];
+});
+
+useEffect(() => {
+  localStorage.setItem(
+    "connectedPartners",
+    JSON.stringify(connectedPartners)
+  );
+}, [connectedPartners]);
+ 
   const partners = [ 
     { name: "Alice", fitnessLevel: "Intermediate", goal: "Build Muscle", city: "New York" },
     { name: "Bob", fitnessLevel: "Beginner", goal: "Lose Weight", city: "Los Angeles" },
