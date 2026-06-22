@@ -9,6 +9,10 @@ function Profile() {
   const [city, setCity] = useState("");
   const [filterlevel, setFilterLevel] = useState("all");
   const [filtercity, setFilterCity] = useState("all");
+  const[partnerName, setPartnerName] = useState("");
+  const [partnerGoal, setPartnerGoal] = useState("");
+  const [partnerLevel, setPartnerLevel] = useState("");
+  const [partnerCity, setPartnerCity] = useState("");
 
   const handleLogout = () => {
     navigate('/login');
@@ -48,11 +52,12 @@ useEffect(() => {
   );
 }, [connectedPartners]);
  
-  const partners = [ 
+  const  [ partners , setPartners] = useState([
     { name: "Alice", fitnessLevel: "Intermediate", goal: "Build Muscle", city: "New York" },
     { name: "Bob", fitnessLevel: "Beginner", goal: "Lose Weight", city: "Los Angeles" },
     { name: "Charlie", fitnessLevel: "Advanced", goal: "Maintain Fitness", city: "Chicago" },
-  ];
+  ]); 
+
   const filteredPartners =
   filterlevel === "all"
     ? partners
@@ -67,6 +72,21 @@ const searchedPartners = filteredPartners.filter(
       filtercity.toLowerCase()
     )
 );
+const handleAddPartner = () => {
+  const newPartner = {
+    name: partnerName,
+     fitnessLevel: partnerLevel,
+    goal: partnerGoal,
+    city: partnerCity,
+  };
+
+  setPartners([...partners, newPartner]);
+  setPartnerName("");
+ setPartnerLevel("");
+ setPartnerGoal("");
+ setPartnerCity("");
+};
+
   return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center"><h1 className="text-5xl font-bold text-green-400 text-center mb-6">Profile Page</h1>
   <p className=" text-2xl text-gray-400 mb-6 text-center">
   Tell us about your fitness journey.
@@ -129,6 +149,37 @@ const searchedPartners = filteredPartners.filter(
   value={filtercity}
   onChange={(e) => setFilterCity(e.target.value)}
 />
+
+< input type="text" placeholder="Partner Name"
+  className="mt-6 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
+  value={partnerName}
+  onChange={(e) => setPartnerName(e.target.value)}
+/>
+<input
+  type="text"
+  placeholder="Fitness Level"
+  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
+  value={partnerLevel}
+  onChange={(e) => setPartnerLevel(e.target.value)}
+/>
+<input 
+  type="text"
+  placeholder="Goal"
+  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
+  value={partnerGoal}
+  onChange={(e) => setPartnerGoal(e.target.value)}
+/>
+<input
+  type="text"
+  placeholder="City"
+  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
+  value={partnerCity}
+  onChange={(e) => setPartnerCity(e.target.value)}
+/>
+<button onClick={handleAddPartner}
+className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition-all text-white mt-4"
+> Add Partner </button>
+
 <h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
 <div className="flex flex-wrap justify-center gap-6">
 {searchedPartners.length === 0 && (
