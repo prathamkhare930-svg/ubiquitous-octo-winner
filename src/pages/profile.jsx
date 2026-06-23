@@ -8,7 +8,7 @@ function Profile() {
   const [goal, setGoal] = useState("");
   const [city, setCity] = useState("");
   const [filterlevel, setFilterLevel] = useState("all");
-  const [filtercity, setFilterCity] = useState("all");
+  const [filtercity, setFilterCity] = useState("");
   const[partnerName, setPartnerName] = useState("");
   const [partnerGoal, setPartnerGoal] = useState("");
   const [partnerLevel, setPartnerLevel] = useState("");
@@ -52,11 +52,36 @@ useEffect(() => {
   );
 }, [connectedPartners]);
  
-  const  [ partners , setPartners] = useState([
-    { name: "Alice", fitnessLevel: "Intermediate", goal: "Build Muscle", city: "New York" },
-    { name: "Bob", fitnessLevel: "Beginner", goal: "Lose Weight", city: "Los Angeles" },
-    { name: "Charlie", fitnessLevel: "Advanced", goal: "Maintain Fitness", city: "Chicago" },
-  ]); 
+ const [partners, setPartners] = useState(() => {
+  return (
+    JSON.parse(localStorage.getItem("partners")) || [
+      {
+        name: "Alice",
+        fitnessLevel: "Intermediate",
+        goal: "Build Muscle",
+        city: "New York",
+      },
+      {
+        name: "Bob",
+        fitnessLevel: "Beginner",
+        goal: "Lose Weight",
+        city: "Los Angeles",
+      },
+      {
+        name: "Charlie",
+        fitnessLevel: "Advanced",
+        goal: "Maintain Fitness",
+        city: "Chicago",
+      },
+    ]
+  );
+});
+useEffect(() => {
+  localStorage.setItem(
+    "partners",
+    JSON.stringify(partners)
+  );
+}, [partners]);
 
   const filteredPartners =
   filterlevel === "all"
@@ -73,6 +98,10 @@ const searchedPartners = filteredPartners.filter(
     )
 );
 const handleAddPartner = () => {
+  if (!partnerName || !partnerLevel || !partnerGoal || !partnerCity) {
+    alert("Please fill in all fields to add a partner.");
+    return;
+  }
   const newPartner = {
     name: partnerName,
      fitnessLevel: partnerLevel,
@@ -155,20 +184,32 @@ const handleAddPartner = () => {
   value={partnerName}
   onChange={(e) => setPartnerName(e.target.value)}
 />
-<input
+<select
+  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl 
+  focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200" 
   type="text"
   placeholder="Fitness Level"
   className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
   value={partnerLevel}
   onChange={(e) => setPartnerLevel(e.target.value)}
-/>
-<input 
+>
+  <option value="beginner">Beginner</option>
+  <option value="intermediate">Intermediate</option>
+  <option value="advanced">Advanced</option>
+</select>
+<select
+  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl 
+  focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200"
   type="text"
   placeholder="Goal"
   className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
   value={partnerGoal}
   onChange={(e) => setPartnerGoal(e.target.value)}
-/>
+>
+  <option value="weight-loss">Weight Loss</option>
+  <option value="muscle-gain">Muscle Gain</option>
+  <option value="endurance">Endurance</option>
+</select>
 <input
   type="text"
   placeholder="City"
@@ -177,6 +218,7 @@ const handleAddPartner = () => {
   onChange={(e) => setPartnerCity(e.target.value)}
 />
 <button onClick={handleAddPartner}
+type="button"
 className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition-all text-white mt-4"
 > Add Partner </button>
 
