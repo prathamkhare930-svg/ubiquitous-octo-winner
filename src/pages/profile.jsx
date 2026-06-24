@@ -53,28 +53,34 @@ useEffect(() => {
 }, [connectedPartners]);
  
  const [partners, setPartners] = useState(() => {
-  return (
-    JSON.parse(localStorage.getItem("partners")) || [
-      {
-        name: "Alice",
-        fitnessLevel: "Intermediate",
-        goal: "Build Muscle",
-        city: "New York",
-      },
-      {
-        name: "Bob",
-        fitnessLevel: "Beginner",
-        goal: "Lose Weight",
-        city: "Los Angeles",
-      },
-      {
-        name: "Charlie",
-        fitnessLevel: "Advanced",
-        goal: "Maintain Fitness",
-        city: "Chicago",
-      },
-    ]
+  const savedPartners = JSON.parse(
+    localStorage.getItem("partners")
   );
+
+  if (savedPartners && savedPartners.length > 0) {
+    return savedPartners;
+  }
+
+  return [
+    {
+      name: "Alice",
+      fitnessLevel: "Intermediate",
+      goal: "Build Muscle",
+      city: "New York",
+    },
+    {
+      name: "Bob",
+      fitnessLevel: "Beginner",
+      goal: "Lose Weight",
+      city: "Los Angeles",
+    },
+    {
+      name: "Charlie",
+      fitnessLevel: "Advanced",
+      goal: "Maintain Fitness",
+      city: "Chicago",
+    },
+  ];
 });
 useEffect(() => {
   localStorage.setItem(
@@ -114,6 +120,17 @@ const handleAddPartner = () => {
  setPartnerLevel("");
  setPartnerGoal("");
  setPartnerCity("");
+};
+const handleDeletePartner = (partnerName) => {
+  setPartners(
+    partners.filter((p) => p.name !== partnerName)
+  );
+
+  setConnectedPartners(
+    connectedPartners.filter(
+      (name) => name !== partnerName
+    )
+  );
 };
 
   return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center"><h1 className="text-5xl font-bold text-green-400 text-center mb-6">Profile Page</h1>
@@ -251,8 +268,10 @@ className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold tra
       ]);
     }
   }}
+ onDelete={() => handleDeletePartner(partner.name)}
 />
 ))}
+
 </div>
 <p className="text-gray-400 text-center mt-4">
  Connected with : {connectedPartners.length > 0 ? connectedPartners.join(', ') : 'No one yet.'}
