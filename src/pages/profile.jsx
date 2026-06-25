@@ -13,6 +13,7 @@ function Profile() {
   const [partnerGoal, setPartnerGoal] = useState("");
   const [partnerLevel, setPartnerLevel] = useState("");
   const [partnerCity, setPartnerCity] = useState("");
+  const[editingPartner, setEditingPartner] = useState(null);
 
   const handleLogout = () => {
     navigate('/login');
@@ -82,6 +83,7 @@ useEffect(() => {
     },
   ];
 });
+
 useEffect(() => {
   localStorage.setItem(
     "partners",
@@ -107,20 +109,43 @@ const handleAddPartner = () => {
   if (!partnerName || !partnerLevel || !partnerGoal || !partnerCity) {
     alert("Please fill in all fields to add a partner.");
     return;
-  }
-  const newPartner = {
-    name: partnerName,
-     fitnessLevel: partnerLevel,
-    goal: partnerGoal,
-    city: partnerCity,
-  };
+  } if ( editingPartner) {
+    const updatedPartners = partners.map((p) =>
+  p.name === editingPartner
+    ? {
+        ...p,
+        name: partnerName,
+        fitnessLevel: partnerLevel,
+        goal: partnerGoal,
+        city: partnerCity,
+      }
+    : p
+);
+setPartners(updatedPartners);
+setConnectedPartners(
+  connectedPartners.map((name) =>
+    name === editingPartner ? partnerName : name
+  )
+);
+  } 
+  else {
+     const newPartner = {
+      name: partnerName,
+      fitnessLevel: partnerLevel,
+      goal: partnerGoal,
+      city: partnerCity,
+    };
 
-  setPartners([...partners, newPartner]);
+    setPartners([...partners, newPartner]);
+  }
   setPartnerName("");
- setPartnerLevel("");
- setPartnerGoal("");
- setPartnerCity("");
-};
+  setPartnerLevel("");
+  setPartnerGoal("");
+  setPartnerCity("");
+   };
+  
+
+  
 const handleDeletePartner = (partnerName) => {
   setPartners(
     partners.filter((p) => p.name !== partnerName)
@@ -133,7 +158,10 @@ const handleDeletePartner = (partnerName) => {
   );
 };
 
-  return <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center"><h1 className="text-5xl font-bold text-green-400 text-center mb-6">Profile Page</h1>
+  return (
+     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
+      <h1 className="text-5xl font-bold text-green-400 text-center mb-6">
+        Profile Page</h1>
   <p className=" text-2xl text-gray-400 mb-6 text-center">
   Tell us about your fitness journey.
 </p>
@@ -237,7 +265,7 @@ const handleDeletePartner = (partnerName) => {
 <button onClick={handleAddPartner}
 type="button"
 className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition-all text-white mt-4"
-> Add Partner </button>
+>   {editingPartner ? "Save Changes" : "Add Partner"} </button>
 
 <h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
 <div className="flex flex-wrap justify-center gap-6">
@@ -269,6 +297,14 @@ className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold tra
     }
   }}
  onDelete={() => handleDeletePartner(partner.name)}
+
+ onEdit={()=> {
+  setEditingPartner(partner.name);
+  setPartnerName(partner.name);
+  setPartnerLevel(partner.fitnessLevel);
+  setPartnerGoal(partner.goal);
+  setPartnerCity(partner.city);
+ }}
 />
 ))}
 
@@ -278,7 +314,6 @@ className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold tra
 </p>
 
    </div>
-   ;
-}
-
+   );
+  }
 export default Profile;
