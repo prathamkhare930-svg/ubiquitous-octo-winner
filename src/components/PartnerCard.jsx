@@ -19,7 +19,7 @@ function PartnerCard({ name, fitnessLevel, goal, city, onConnect , isConnected ,
       <button
     onClick={onConnect}
     type ="button"
-    className={`px-6 py-2 rounded-xl font-semibold text-white block mx-auto mt-4 ${
+    className={` w-full px-6 py-2 rounded-xl font-semibold text-white block mx-auto mt-4 ${
     isConnected
       ? "bg-red-600 hover:bg-red-700"
       : "bg-green-600 hover:bg-green-700"
@@ -29,13 +29,14 @@ function PartnerCard({ name, fitnessLevel, goal, city, onConnect , isConnected ,
 
   <button
   type = "button"
+ 
   onClick={() => {
     console.log("Delete clicked");
     onDelete();
   }}
-  className="px-6 py-2 rounded-xl font-semibold text-white block mx-auto mt-4 bg-red-600 hover:bg-red-700"
+   className={"absolute top-3 left-3 bg-gray-500 hover:border-gray-700 text-white px-3 py-1 rounded-lg text-sm font-semibold"}
 >
-  Delete
+  🗑️
 </button>
     </div>
   );

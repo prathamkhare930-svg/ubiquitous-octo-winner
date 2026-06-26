@@ -127,6 +127,11 @@ setConnectedPartners(
     name === editingPartner ? partnerName : name
   )
 );
+setEditingPartner(null);
+setPartnerName("");
+setPartnerLevel("");
+setPartnerGoal("");
+setPartnerCity("");
   } 
   else {
      const newPartner = {
@@ -147,6 +152,9 @@ setConnectedPartners(
 
   
 const handleDeletePartner = (partnerName) => {
+   if (!window.confirm("Are you sure you want to delete this partner?")) {
+  return;
+}
   setPartners(
     partners.filter((p) => p.name !== partnerName)
   );
@@ -266,6 +274,10 @@ const handleDeletePartner = (partnerName) => {
 type="button"
 className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition-all text-white mt-4"
 >   {editingPartner ? "Save Changes" : "Add Partner"} </button>
+
+<h2 className="text-2xl font-bold text-green-400">
+  {editingPartner ? "Edit Partner" : "Add New Partner"}
+</h2>
 
 <h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
 <div className="flex flex-wrap justify-center gap-6">
