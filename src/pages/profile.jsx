@@ -2,6 +2,7 @@ import { useNavigate} from "react-router-dom";
 import { useState , useEffect } from "react";
 import {InfoCard} from "../components/InfoCard";
 import PartnerCard from "../components/PartnerCard";
+import { PartnerForm } from "../components/partnerForm";
 function Profile() {
   const navigate = useNavigate();
   const [fitnessLevel, setFitnessLevel] = useState("");
@@ -9,6 +10,7 @@ function Profile() {
   const [city, setCity] = useState("");
   const [filterlevel, setFilterLevel] = useState("all");
   const [filtercity, setFilterCity] = useState("");
+  const [filterName , setFilterName] = useState("");
   const[partnerName, setPartnerName] = useState("");
   const [partnerGoal, setPartnerGoal] = useState("");
   const [partnerLevel, setPartnerLevel] = useState("");
@@ -148,9 +150,6 @@ setPartnerCity("");
   setPartnerGoal("");
   setPartnerCity("");
    };
-  
-
-  
 const handleDeletePartner = (partnerName) => {
    if (!window.confirm("Are you sure you want to delete this partner?")) {
   return;
@@ -165,6 +164,13 @@ const handleDeletePartner = (partnerName) => {
     )
   );
 };
+
+const finalPartners = searchedPartners.filter(
+  (partner) =>
+    partner.name.toLowerCase().includes(
+      filterName.toLowerCase()
+    )
+);
 
   return (
      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
@@ -231,54 +237,60 @@ const handleDeletePartner = (partnerName) => {
   value={filtercity}
   onChange={(e) => setFilterCity(e.target.value)}
 />
-
-< input type="text" placeholder="Partner Name"
-  className="mt-6 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
-  value={partnerName}
-  onChange={(e) => setPartnerName(e.target.value)}
+<input 
+type="text"
+placeholder = "filter by name"
+className = "mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
+value={filterName}
+onChange={(e) => setFilterName(e.target.value)}
 />
-<select
-  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl 
-  focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200" 
-  type="text"
-  placeholder="Fitness Level"
-  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
-  value={partnerLevel}
-  onChange={(e) => setPartnerLevel(e.target.value)}
->
-  <option value="beginner">Beginner</option>
-  <option value="intermediate">Intermediate</option>
-  <option value="advanced">Advanced</option>
-</select>
-<select
-  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl 
-  focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-lime-200"
-  type="text"
-  placeholder="Goal"
-  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
-  value={partnerGoal}
-  onChange={(e) => setPartnerGoal(e.target.value)}
->
-  <option value="weight-loss">Weight Loss</option>
-  <option value="muscle-gain">Muscle Gain</option>
-  <option value="endurance">Endurance</option>
-</select>
-<input
-  type="text"
-  placeholder="City"
-  className="mt-4 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
-  value={partnerCity}
-  onChange={(e) => setPartnerCity(e.target.value)}
+<PartnerForm 
+partnerName={partnerName}
+  setPartnerName={setPartnerName}
+
+  partnerLevel={partnerLevel}
+  setPartnerLevel={setPartnerLevel}
+
+  partnerGoal={partnerGoal}
+  setPartnerGoal={setPartnerGoal}
+
+  partnerCity={partnerCity}
+  setPartnerCity={setPartnerCity}
+
+  editingPartner={editingPartner}
+
+  handleAddPartner={handleAddPartner}
 />
-<button onClick={handleAddPartner}
-type="button"
-className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition-all text-white mt-4"
->   {editingPartner ? "Save Changes" : "Add Partner"} </button>
+<div className="flex justify-center gap-6 my-8 flex-wrap">
 
-<h2 className="text-2xl font-bold text-green-400">
-  {editingPartner ? "Edit Partner" : "Add New Partner"}
-</h2>
+  <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-44 text-center shadow-lg">
+    <h3 className="text-lg font-semibold text-green-400">
+      👥 Total Partners
+    </h3>
+    <p className="text-3xl font-bold mt-2">
+      {partners.length}
+    </p>
+  </div>
 
+  <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-44 text-center shadow-lg">
+    <h3 className="text-lg font-semibold text-green-400">
+      🤝 Connected
+    </h3>
+    <p className="text-3xl font-bold mt-2">
+      {connectedPartners.length}
+    </p>
+  </div>
+
+  <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-44 text-center shadow-lg">
+    <h3 className="text-lg font-semibold text-green-400">
+      🔍 Showing
+    </h3>
+    <p className="text-3xl font-bold mt-2">
+      {finalPartners.length}
+    </p>
+  </div>
+
+</div>
 <h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
 <div className="flex flex-wrap justify-center gap-6">
 {searchedPartners.length === 0 && (
@@ -286,7 +298,7 @@ className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold tra
     No partners found.
   </p>
 )}
-      {searchedPartners.map((partner, index) => (
+      {finalPartners.map((partner, index) => (
  <PartnerCard
   key={index}
   name={partner.name}
