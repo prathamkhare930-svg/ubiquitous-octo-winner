@@ -3,6 +3,7 @@ import { useState , useEffect } from "react";
 import {InfoCard} from "../components/InfoCard";
 import PartnerCard from "../components/PartnerCard";
 import { PartnerForm } from "../components/partnerForm";
+import StatsCard from "../components/StatsCard";
 function Profile() {
   const navigate = useNavigate();
   const [fitnessLevel, setFitnessLevel] = useState("");
@@ -263,23 +264,11 @@ partnerName={partnerName}
 />
 <div className="flex justify-center gap-6 my-8 flex-wrap">
 
-  <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-44 text-center shadow-lg">
-    <h3 className="text-lg font-semibold text-green-400">
-      👥 Total Partners
-    </h3>
-    <p className="text-3xl font-bold mt-2">
-      {partners.length}
-    </p>
-  </div>
-
-  <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-44 text-center shadow-lg">
-    <h3 className="text-lg font-semibold text-green-400">
-      🤝 Connected
-    </h3>
-    <p className="text-3xl font-bold mt-2">
-      {connectedPartners.length}
-    </p>
-  </div>
+<div className="flex justify-center gap-6 my-8 flex-wrap">
+<StatsCard title="Total Partners" value={partners.length} icon="👥"/>
+<StatsCard title="Connected" value={connectedPartners.length} icon="🤝" />
+<StatsCard title="Showing" value={finalPartners.length} icon="🔍" />
+</div>
 
   <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-44 text-center shadow-lg">
     <h3 className="text-lg font-semibold text-green-400">
