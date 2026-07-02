@@ -1,5 +1,6 @@
-function PartnerCard({ name, fitnessLevel, goal, city, onConnect , isConnected , onDelete , onEdit })  {
+function PartnerCard({ name, fitnessLevel, goal, city, onConnect , isConnected , onDelete , onEdit , showActions=true }) { 
   return (
+    
     <div className="relative bg-gray-800 border border-gray-700 rounded-2xl p-6 w-96 mt-4 shadow-lg hover:scale-105 transition-all duration-300 text-center">
       <h3 className="text-xl font-bold text-green-400 text-center">
         👤 {name}
@@ -8,7 +9,9 @@ function PartnerCard({ name, fitnessLevel, goal, city, onConnect , isConnected ,
       <p>🏋️ Fitness Level: {fitnessLevel}</p>
       <p>🎯 Goal: {goal}</p>
       <p>📍 City: {city}</p>
-
+     {showActions && (
+      <div className="flex justify-between mt-4">
+        
       <button 
       onClick={onEdit}
       type="button"
@@ -37,9 +40,13 @@ function PartnerCard({ name, fitnessLevel, goal, city, onConnect , isConnected ,
    className={"absolute top-3 left-3 bg-gray-500 hover:border-gray-700 text-white px-3 py-1 rounded-lg text-sm font-semibold"}
 >
   🗑️
-</button>
-    </div>
+</button> 
+</div> )
+}
+
+    </div> 
   );
 }
+
 
 export default PartnerCard;

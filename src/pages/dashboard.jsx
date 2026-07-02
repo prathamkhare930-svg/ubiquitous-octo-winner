@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import StatsCard from "../components/StatsCard";
+import PartnerCard from "../components/PartnerCard";
 
 function Dashboard() {
   const [partners, setPartners] = useState([]);
@@ -78,33 +79,17 @@ if (selectedView === "available") {
             No partners available.
           </p>
         ) : (
-          displayedPartners.map((partner, index) => (
-              <div
-                key={index}
-                className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-72 text-center"
-              >
-                <h3 className="text-xl font-bold text-green-400">
-                  👤 {partner.name}
-                </h3>
-                <p className="mt-2">
-                  🏋️ {partner.fitnessLevel}
-                </p>
-
-                <p>
-                  🎯 {partner.goal}
-                </p>
-
-                <p>
-                  📍 {partner.city}
-                </p>
-
-                <p className="mt-3 font-semibold text-green-400">
-                  {connectedPartners.includes(partner.name)
-                    ? "✅ Connected"
-                    : "❌ Not Connected"}
-                </p>
-              </div>
-            ))
+      displayedPartners.map((partner, index) => (
+  <PartnerCard
+    key={index}
+    name={partner.name}
+    fitnessLevel={partner.fitnessLevel}
+    goal={partner.goal}
+    city={partner.city}
+    isConnected={connectedPartners.includes(partner.name)}
+    showActions={false}
+  />
+))
         )}
       </div>
 
