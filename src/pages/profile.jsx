@@ -19,7 +19,8 @@ function Profile() {
   const[editingPartner, setEditingPartner] = useState(null);
 
   const handleLogout = () => {
-    navigate('/login');
+    localStorage.removeItem("isLoggedIn");
+    navigate('/');
   }
   const handleSave = () => {
     localStorage.setItem('fitnessLevel', fitnessLevel);

@@ -13,7 +13,7 @@ function Login() {
     email,
     password,
   });
-
+localStorage.setItem("isLoggedIn", "true");
   navigate("/profile");
 };
   const handleGetStarted = (e) => {
