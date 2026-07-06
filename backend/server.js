@@ -1,4 +1,8 @@
+const e = require("express");
 const express = require("express");
+const partnerRoutes = require("./routes/partnerRoutes");
+app.use("/api/partners", partnerRoutes);
+
 
 const app = express();
 
@@ -39,7 +43,74 @@ const partners = [
 app.get("/api/partners", (req, res) => {
   res.json(partners);
 });
+app.post("/api/partners", (req, res) => {
+  const newPartner = req.body;
 
+  partners.push(newPartner);
+
+  res.json({
+    success: true,
+    message: "Partner Added Successfully",
+    partner: newPartner,
+  });
+});
+app.get("/api/partners/:id", (req, res) => {
+    const partnerId = Number(req.params.id);
+
+    const partner = partners.find(
+        p => p.id === partnerId
+    );
+
+    if (!partner) {
+        return res.status(404).json({
+            success: false,
+            message: "Partner not found"
+        });
+    }
+
+    res.json({
+        success: true,
+        partner
+    });
+});
+app.delete("/api/partners/:id", (req, res) => {
+    const partnerId = Number(req.params.id);
+    const partnerIndex = partners.findIndex(p => p.id === partnerId);
+
+    if (partnerIndex === -1) {
+        return res.status(404).json({
+            success: false,
+            message: "Partner not found"
+        });
+    }
+
+    partners.splice(partnerIndex, 1);
+
+    res.json({
+        success: true,
+        message: "Partner deleted successfully"
+    });
+});
+app.put("/api/partners/:id" , (req, res) => {
+    const partnerId = Number(req.params.id);
+    const partnerIndex = partners.findIndex(p => p.id === partnerId);
+    if (partnerIndex === -1) { 
+      return res.status(404).json({
+        success: false,
+        message: "Partner not found"
+      });
+    } else {
+      const updatedPartner = { ...partners[partnerIndex], ...req.body };
+      partners[partnerIndex] = updatedPartner;
+      res.json({
+        success: true,
+        message: "Partner updated successfully",
+        partner: updatedPartner 
+      });
+      }
+    
+});
+app.use(express.json());
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
