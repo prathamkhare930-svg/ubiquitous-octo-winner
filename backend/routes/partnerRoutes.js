@@ -1,8 +1,21 @@
 const router = require("express").Router();
 
-const { getAllPartners, createPartner, getPartnerById } = require("../controllers/partnerControllers");
+const {
+  getAllPartners,
+  createPartner,
+  getPartnerById,
+  updatePartner,
+  deletePartner,
+} = require("../controllers/partnerControllers");
 
 router.get("/", getAllPartners);
+
+router.get("/:id", getPartnerById);
+
 router.post("/", createPartner);
-router.get("/:id", getPartnerById); 
+
+router.put("/:id", updatePartner);
+
+router.delete("/:id", deletePartner);
+
 module.exports = router;
