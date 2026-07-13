@@ -1,109 +1,132 @@
-const partners = [
-  {
-    id: 1,
-    name: "Alice",
-    fitnessLevel: "Beginner",
-    goal: "Weight Loss",
-    city: "Indore",
-  },
-  {
-    id: 2,
-    name: "Rahul",
-    fitnessLevel: "Intermediate",
-    goal: "Muscle Gain",
-    city: "Bhopal",
-  },
-];
+const Partner = require("../models/Partner");
 
-// GET ALL
-exports.getAllPartners = (req, res) => {
-  res.json(partners);
-};
+// ==========================
+// GET ALL PARTNERS
+// ==========================
+exports.getAllPartners = async (req, res) => {
+  try {
+    const partners = await Partner.find();
 
-// GET BY ID
-exports.getPartnerById = (req, res) => {
-  const partnerId = Number(req.params.id);
-
-  const partner = partners.find((p) => p.id === partnerId);
-
-  if (!partner) {
-    return res.status(404).json({
+    res.json({
+      success: true,
+      partners,
+    });
+  } catch (error) {
+    res.status(500).json({
       success: false,
-      message: "Partner not found",
+      message: "Error fetching partners",
+      error: error.message,
     });
   }
-
-  res.json({
-    success: true,
-    partner,
-  });
 };
 
-// CREATE
-exports.createPartner = (req, res) => {
-  const newPartner = {
-    id: partners.length + 1,
-    ...req.body,
-  };
+// ==========================
+// GET PARTNER BY ID
+// ==========================
+exports.getPartnerById = async (req, res) => {
+  try {
+    const partner = await Partner.findById(req.params.id);
 
-  partners.push(newPartner);
+    if (!partner) {
+      return res.status(404).json({
+        success: false,
+        message: "Partner not found",
+      });
+    }
 
-  res.status(201).json({
-    success: true,
-    message: "Partner created successfully",
-    partner: newPartner,
-  });
-};
-
-// UPDATE
-exports.updatePartner = (req, res) => {
-  const partnerId = Number(req.params.id);
-
-  const partnerIndex = partners.findIndex(
-    (p) => p.id === partnerId
-  );
-
-  if (partnerIndex === -1) {
-    return res.status(404).json({
+    res.json({
+      success: true,
+      partner,
+    });
+  } catch (error) {
+    res.status(500).json({
       success: false,
-      message: "Partner not found",
+      message: "Error fetching partner",
+      error: error.message,
     });
   }
-
-  const updatedPartner = {
-    ...partners[partnerIndex],
-    ...req.body,
-  };
-
-  partners[partnerIndex] = updatedPartner;
-
-  res.json({
-    success: true,
-    message: "Partner updated successfully",
-    partner: updatedPartner,
-  });
 };
 
-// DELETE
-exports.deletePartner = (req, res) => {
-  const partnerId = Number(req.params.id);
+// ==========================
+// CREATE PARTNER
+// ==========================
+exports.createPartner = async (req, res) => {
+  try {
+    const newPartner = await Partner.create(req.body);
 
-  const partnerIndex = partners.findIndex(
-    (p) => p.id === partnerId
-  );
-
-  if (partnerIndex === -1) {
-    return res.status(404).json({
+    res.status(201).json({
+      success: true,
+      message: "Partner created successfully",
+      partner: newPartner,
+    });
+  } catch (error) {
+    res.status(500).json({
       success: false,
-      message: "Partner not found",
+      message: "Error creating partner",
+      error: error.message,
     });
   }
+};
 
-  const deletedPartner = partners.splice(partnerIndex, 1);
+// ==========================
+// UPDATE PARTNER
+// ==========================
+exports.updatePartner = async (req, res) => {
+  try {
+    const updatedPartner = await Partner.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-  res.json({
-    success: true,
-    message: "Partner deleted successfully",
-    partner: deletedPartner[0],
-  });
+    if (!updatedPartner) {
+      return res.status(404).json({
+        success: false,
+        message: "Partner not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Partner updated successfully",
+      partner: updatedPartner,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating partner",
+      error: error.message,
+    });
+  }
+};
+
+// ==========================
+// DELETE PARTNER
+// ==========================
+exports.deletePartner = async (req, res) => {
+  try {
+    const deletedPartner = await Partner.findByIdAndDelete(req.params.id);
+
+    if (!deletedPartner) {
+      return res.status(404).json({
+        success: false,
+        message: "Partner not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Partner deleted successfully",
+      partner: deletedPartner,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting partner",
+      error: error.message,
+    });
+  }
 };
