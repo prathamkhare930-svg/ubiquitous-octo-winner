@@ -52,10 +52,29 @@ handleAddPartner
   value={partnerCity}
   onChange={(e) => setPartnerCity(e.target.value)}
 />
-<button onClick={handleAddPartner}
-type="button"
-className = "w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition-all text-white mt-4"
->   {editingPartner ? "Save Changes" : "Add Partner"} </button>
+<button
+  type="button"
+ onClick={() => {
+    if(editingPartner){
+        handleSaveEdit({
+            name: partnerName,
+            fitnessLevel: partnerLevel,
+            goal: partnerGoal,
+            city: partnerCity,
+        });
+    }else{
+        handleAddPartner({
+            name: partnerName,
+            fitnessLevel: partnerLevel,
+            goal: partnerGoal,
+            city: partnerCity,
+        });
+    }
+}}
+  className="w-96 bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition-all text-white mt-4"
+>
+  {editingPartner ? "Save Changes" : "Add Partner"}
+</button>
 </div>
     );
 } ;
