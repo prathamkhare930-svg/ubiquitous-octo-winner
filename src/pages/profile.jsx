@@ -1,75 +1,49 @@
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-
-import { InfoCard } from "../components/InfoCard";
 import PartnerCard from "../components/PartnerCard";
 import { PartnerForm } from "../components/partnerForm";
-import StatsCard from "../components/StatsCard";
-const [partnerName, setPartnerName] = useState("");
-const [partnerLevel, setPartnerLevel] = useState("beginner");
-const [partnerGoal, setPartnerGoal] = useState("weight-loss");
-const [partnerCity, setPartnerCity] = useState("");
-
-const [connectedPartners, setConnectedPartners] = useState([]);
 
 function Profile() {
-  const navigate = useNavigate();
-
-  // ===========================
-  // STATES
-  // ===========================
 
   const [partners, setPartners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [search, setSearch] = useState("");
+  const [partnerName, setPartnerName] = useState("");
 
-  const [showPartnerForm, setShowPartnerForm] = useState(false);
+const [partnerLevel, setPartnerLevel] =
+  useState("beginner");
 
-  const [editingPartner, setEditingPartner] = useState(null);
-const filteredPartners = partners.filter((partner) =>
-  partner.name.toLowerCase().includes(search.toLowerCase())
-);
-  // ===========================
-  // FETCH PARTNERS
-  // ===========================
+const [partnerGoal, setPartnerGoal] =
+  useState("weight-loss");
+
+const [partnerCity, setPartnerCity] =
+  useState("");
+
+const [showPartnerForm, setShowPartnerForm] =
+  useState(false);
 
   const fetchPartners = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await axios.get(
-      "http://localhost:5000/api/partners"
-    );
+      const response = await axios.get(
+        "http://localhost:5000/api/partners"
+      );
 
-    console.log(response.data);
+      setPartners(response.data.partners);
 
-    setPartners(response.data.partners);
-
-  } catch (err) {
-    console.log("ERROR:", err);
-    console.log("MESSAGE:", err.message);
-    console.log("RESPONSE:", err.response);
-
-    setError("Failed to fetch partners");
-  } finally {
-    setLoading(false);
-  }
-};
-  // ===========================
-  // PAGE LOAD
-  // ===========================
+    } catch (err) {
+      console.log(err);
+      setError("Failed to fetch partners");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchPartners();
   }, []);
-
-  // ===========================
-  // ADD PARTNER
-  // ===========================
-
   const handleAddPartner = async (partnerData) => {
   try {
     await axios.post(
@@ -77,7 +51,7 @@ const filteredPartners = partners.filter((partner) =>
       partnerData
     );
 
-    await fetchPartners();
+    fetchPartners();
 
     setPartnerName("");
     setPartnerLevel("beginner");
@@ -85,179 +59,94 @@ const filteredPartners = partners.filter((partner) =>
     setPartnerCity("");
 
     setShowPartnerForm(false);
+
   } catch (err) {
     console.log(err);
   }
 };
 
-  // ===========================
-  // DELETE PARTNER
-  // ===========================
-
-  const handleDeletePartner = async (id) => {
-    try {
-      await axios.delete(
-        `http://localhost:5000/api/partners/${id}`
-      );
-
-      fetchPartners();
-    }catch(err){
-   console.log(err.response);
-   console.log(err.message);
-}
-  };
-
-  // ===========================
-  // EDIT BUTTON
-  // ===========================
-
-  const handleEditClick = (partner) => {
-    setEditingPartner(partner);
-    setShowPartnerForm(true);
-  };
-
-  // ===========================
-  // SAVE EDIT
-  // ===========================
-
-  const handleSaveEdit = async (updatedPartner) => {
-    try {
-      await axios.put(
-        `http://localhost:5000/api/partners/${editingPartner._id}`,
-        updatedPartner
-      );
-
-      fetchPartners();
-
-      setEditingPartner(null);
-      setShowPartnerForm(false);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // ===========================
-  // FILTER
-  // ===========================
-
   const filteredPartners = partners.filter((partner) =>
     partner.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // ===========================
-  // LOADING
-  // ===========================
-
   if (loading) {
     return (
-      <div className="text-center text-2xl mt-10 text-white">
+      <h1 className="text-white text-center mt-10 text-3xl">
         Loading...
-      </div>
+      </h1>
     );
   }
-
-  // ===========================
-  // ERROR
-  // ===========================
 
   if (error) {
     return (
-      <div className="text-center text-red-500 text-xl mt-10">
+      <h1 className="text-red-500 text-center mt-10 text-3xl">
         {error}
-      </div>
+      </h1>
     );
   }
-  return (
-     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
-      <h1 className="text-5xl font-bold text-green-400 text-center mb-6">
-        Profile Page</h1>
-  <p className=" text-2xl text-gray-400 mb-6 text-center">
-  Tell us about your fitness journey.
-</p>
-  
 
-<input
-  type="text"
-  placeholder="Search Partner"
-  className="mt-6 w-96 p-4 bg-gray-700 text-white border border-gray-600 rounded-xl"
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-/>
-<button
-  onClick={() => {
-    setEditingPartner(null);
-    setShowPartnerForm(true);
-  }}
-  className="bg-green-600 px-5 py-3 rounded-xl mt-5"
+  return (
+    <div className="min-h-screen bg-black text-white p-10">
+
+      <h1 className="text-5xl font-bold text-green-400 text-center">
+        Gym Partners
+      </h1>
+      <button
+  onClick={() => setShowPartnerForm(true)}
+  className="mt-6 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl font-semibold"
 >
   + Add Partner
 </button>
-{showPartnerForm && (
-  <PartnerForm
-    partnerName={partnerName}
-    setPartnerName={setPartnerName}
+{
+  showPartnerForm && (
+    <PartnerForm
+      partnerName={partnerName}
+      setPartnerName={setPartnerName}
 
-    partnerLevel={partnerLevel}
-    setPartnerLevel={setPartnerLevel}
+      partnerLevel={partnerLevel}
+      setPartnerLevel={setPartnerLevel}
 
-    partnerGoal={partnerGoal}
-    setPartnerGoal={setPartnerGoal}
+      partnerGoal={partnerGoal}
+      setPartnerGoal={setPartnerGoal}
 
-    partnerCity={partnerCity}
-    setPartnerCity={setPartnerCity}
+      partnerCity={partnerCity}
+      setPartnerCity={setPartnerCity}
 
-    editingPartner={editingPartner}
+      editingPartner={false}
 
-    handleAddPartner={
-      editingPartner
-        ? handleSaveEdit
-        : handleAddPartner
-    }
-  />
-)}
-<div className="flex justify-center gap-6 my-8 flex-wrap">
+      handleAddPartner={handleAddPartner}
+    />
+  )
+}
 
-<div className="flex justify-center gap-6 my-8 flex-wrap">
-<StatsCard title="Total Partners" value={partners.length} icon="👥"/>
-<StatsCard title="Connected" value={connectedPartners.length} icon="🤝" />
-<StatsCard title="Showing" value={finalPartners.length} icon="🔍" />
-</div>
+      <input
+        type="text"
+        placeholder="Search Partner..."
+        className="mt-8 w-full p-4 rounded-xl bg-gray-800 border border-gray-700"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
-  <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-44 text-center shadow-lg">
-    <h3 className="text-lg font-semibold text-green-400">
-      🔍 Showing
-    </h3>
-    <p className="text-3xl font-bold mt-2">
-      {finalPartners.length}
-    </p>
-  </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
 
-</div>
-<h2 className="text-3xl font-bold text-green-400"> Available Partners </h2>
-<div className="flex flex-wrap justify-center gap-6">
-{searchedPartners.length === 0 && (
-  <p className="text-gray-400 text-center mt-4">
-    No partners found.
-  </p>
-)}
-      {finalPartners.map((partner, index) => (
- <PartnerCard
-  key={partner._id}
-  name={partner.name}
-  fitnessLevel={partner.fitnessLevel}
-  goal={partner.goal}
-  city={partner.city}
-  onDelete={() => handleDeletePartner(partner._id)}
-  onEdit={() => handleEditClick(partner)}
-/>
-))}
+        {filteredPartners.length === 0 ? (
+          <h2>No Partners Found</h2>
+        ) : (
+          filteredPartners.map((partner) => (
+            <PartnerCard
+              key={partner._id}
+              name={partner.name}
+              fitnessLevel={partner.fitnessLevel}
+              goal={partner.goal}
+              city={partner.city}
+            />
+          ))
+        )}
 
-</div>
-<p className="text-gray-400 text-center mt-4">
- Connected with : {connectedPartners.length > 0 ? connectedPartners.join(', ') : 'No one yet.'}
-</p>
+      </div>
 
-   </div>
-   );
-  }
+    </div>
+  );
+}
+
 export default Profile;
