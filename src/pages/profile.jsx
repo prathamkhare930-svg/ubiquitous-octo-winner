@@ -10,6 +10,7 @@ function Profile() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [partnerName, setPartnerName] = useState("");
+  const [editingPartner, setEditingPartner] = useState(null);
 
 const [partnerLevel, setPartnerLevel] =
   useState("beginner");
@@ -63,8 +64,40 @@ const [showPartnerForm, setShowPartnerForm] =
   } catch (err) {
     console.log(err);
   }
-};
+};const handleEditClick = (partner) => {
+  setEditingPartner(partner);
 
+  setPartnerName(partner.name);
+  setPartnerLevel(partner.fitnessLevel);
+  setPartnerGoal(partner.goal);
+  setPartnerCity(partner.city);
+
+  setShowPartnerForm(true);
+};
+const handleSaveEdit = async (partnerData) => {
+  try {
+    await axios.put(
+      `http://localhost:5000/api/partners/${editingPartner._id}`,
+      partnerData
+    );
+
+    fetchPartners();
+
+    setEditingPartner(null);
+
+    setPartnerName("");
+    setPartnerLevel("beginner");
+    setPartnerGoal("weight-loss");
+    setPartnerCity("");
+
+    setShowPartnerForm(false);
+
+    alert("Partner Updated Successfully!");
+
+  } catch (err) {
+    console.log(err);
+  }
+};
   const filteredPartners = partners.filter((partner) =>
     partner.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -112,9 +145,13 @@ const [showPartnerForm, setShowPartnerForm] =
       partnerCity={partnerCity}
       setPartnerCity={setPartnerCity}
 
-      editingPartner={false}
+      editingPartner={ !! editingPartner}
 
-      handleAddPartner={handleAddPartner}
+     handleAddPartner={
+  editingPartner
+    ? handleSaveEdit
+    : handleAddPartner
+}
     />
   )
 }
@@ -134,12 +171,14 @@ const [showPartnerForm, setShowPartnerForm] =
         ) : (
           filteredPartners.map((partner) => (
             <PartnerCard
-              key={partner._id}
-              name={partner.name}
-              fitnessLevel={partner.fitnessLevel}
-              goal={partner.goal}
-              city={partner.city}
-            />
+  key={partner._id}
+  name={partner.name}
+  fitnessLevel={partner.fitnessLevel}
+  goal={partner.goal}
+  city={partner.city}
+  onEdit={() => handleEditClick(partner)}
+  onDelete={() => handleDeletePartner(partner._id)}
+/>
           ))
         )}
 

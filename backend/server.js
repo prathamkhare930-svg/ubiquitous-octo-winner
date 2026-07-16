@@ -1,5 +1,7 @@
+
 require("dotenv").config();
 const cors = require("cors");
+const authRoutes = require("./routes/authRoutes");
 
 const express = require("express");
 const app = express();
@@ -15,7 +17,7 @@ app.use(express.json());
 
 app.use(logger);
 
-app.use("/api/partners", partnerRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
