@@ -1,40 +1,68 @@
-import { Link } from "react-router-dom";
-export const Navbar = () => {   
-    return (
-      
-        <div style={{
-    display: "flex",
-    justifyContent: "space-between" ,
-    alignItems: "center" ,
-    padding: "10px 20px" ,
-    backgroundColor: "blue" ,
-    color: "#fff" ,
-    boxShadow: "0 0 10px #fff" ,
-    fontSize: "24px" ,
-    fontWeight: "bold" ,
-    fontfamily: "Arial, sans-serif" ,
-  }}>
-        <h2>fitconnect ai   </h2>
-            <div style={{
-    display: "flex",
-    justifyContent: "center" ,
-    gap: "20px" ,
-    color: "#fff" ,
-    fontcolor: "red" ,
-  } }> <div
-  style={{
-    display: "flex",
-    gap: "40px",
-  }}
->
-  <Link to="/">Home</Link>
-  <Link to="/login">Login</Link>
-  <Link to="/register">Register</Link>
-  <Link to="/dashboard">Dashboard</Link>
-</div></div>
-       
-        </div>
-        
-        
-    );
+import { Link, useNavigate } from "react-router-dom";
+
+export const Navbar = () => {
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "10px 20px",
+        backgroundColor: "blue",
+        color: "#fff",
+        boxShadow: "0 0 10px #fff",
+        fontSize: "24px",
+        fontWeight: "bold",
+      }}
+    >
+      <h2>FitConnect AI</h2>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "30px",
+          alignItems: "center",
+        }}
+      >
+        <Link to="/">Home</Link>
+
+        {!token ? (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>
+        ) : (
+          <>
+            <Link to="/dashboard">Dashboard</Link>
+
+            <button
+              onClick={handleLogout}
+              style={{
+                background: "red",
+                color: "white",
+                border: "none",
+                padding: "8px 15px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              Logout
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
