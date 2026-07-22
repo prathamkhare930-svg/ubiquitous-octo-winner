@@ -19,19 +19,17 @@ const handleLogin = async (e) => {
       }
     );
 
-    console.log(response.data);
-
     localStorage.setItem("token", response.data.token);
-    localStorage.setItem("user", JSON.stringify(response.data.user));
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
 
     navigate("/profile");
 
   } catch (err) {
-    console.log(err);
-
-    alert(
-      err.response?.data?.message || "Login Failed"
-    );
+    console.log(err.response?.data);
+    alert(err.response?.data?.message || "Login Failed");
   }
 };
   const handleGetStarted = (e) => {

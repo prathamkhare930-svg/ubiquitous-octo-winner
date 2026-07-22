@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import PartnerCard from "../components/PartnerCard";
 import { PartnerForm } from "../components/partnerForm";
 
@@ -25,31 +25,44 @@ const [showPartnerForm, setShowPartnerForm] =
   useState(false);
 
   const fetchPartners = async () => {
-    try {
-      setLoading(true);
-
-      const response = await axios.get(
-        "http://localhost:5000/api/partners"
-      );
-
-      setPartners(response.data.partners);
-
-    } catch (err) {
-      console.log(err);
-      setError("Failed to fetch partners");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPartners();
-  }, []);
-  const handleAddPartner = async (partnerData) => {
   try {
+    setLoading(true);
+
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      "http://localhost:5000/api/partners",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setPartners(response.data.partners);
+  } catch (err) {
+    console.log(err);
+    setError("Failed to fetch partners");
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchPartners();
+}, []);
+ const handleAddPartner = async (partnerData) => {
+  try {
+    const token = localStorage.getItem("token");
+
     await axios.post(
       "http://localhost:5000/api/partners",
-      partnerData
+      partnerData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     fetchPartners();
@@ -58,13 +71,13 @@ const [showPartnerForm, setShowPartnerForm] =
     setPartnerLevel("beginner");
     setPartnerGoal("weight-loss");
     setPartnerCity("");
-
     setShowPartnerForm(false);
 
   } catch (err) {
     console.log(err);
   }
-};const handleEditClick = (partner) => {
+};
+const handleEditClick = (partner) => {
   setEditingPartner(partner);
 
   setPartnerName(partner.name);
@@ -76,48 +89,50 @@ const [showPartnerForm, setShowPartnerForm] =
 };
 const handleSaveEdit = async (partnerData) => {
   try {
+    const token = localStorage.getItem("token");
+
     await axios.put(
       `http://localhost:5000/api/partners/${editingPartner._id}`,
-      partnerData
+      partnerData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     fetchPartners();
 
     setEditingPartner(null);
-
     setPartnerName("");
     setPartnerLevel("beginner");
     setPartnerGoal("weight-loss");
     setPartnerCity("");
-
     setShowPartnerForm(false);
 
     alert("Partner Updated Successfully!");
-
   } catch (err) {
     console.log(err);
   }
 };
-  const filteredPartners = partners.filter((partner) =>
-    partner.name.toLowerCase().includes(search.toLowerCase())
-  );
+const handleDeletePartner = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
 
-  if (loading) {
-    return (
-      <h1 className="text-white text-center mt-10 text-3xl">
-        Loading...
-      </h1>
+    await axios.delete(
+      `http://localhost:5000/api/partners/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-  }
 
-  if (error) {
-    return (
-      <h1 className="text-red-500 text-center mt-10 text-3xl">
-        {error}
-      </h1>
-    );
+    fetchPartners();
+  } catch (err) {
+    console.log(err);
   }
-
+};
   return (
     <div className="min-h-screen bg-black text-white p-10">
 
