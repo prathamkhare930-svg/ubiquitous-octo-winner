@@ -5,7 +5,9 @@ const Partner = require("../models/Partner");
 // ==========================
 exports.getAllPartners = async (req, res) => {
   try {
-    const partners = await Partner.find();
+   const partners = await Partner.find({
+    user: req.user.id,
+});
 
     res.json({
       success: true,
@@ -52,8 +54,10 @@ exports.getPartnerById = async (req, res) => {
 // ==========================
 exports.createPartner = async (req, res) => {
   try {
-    const newPartner = await Partner.create(req.body);
-
+const newPartner = await Partner.create({
+  ...req.body,
+  user: req.user.id,
+});
     res.status(201).json({
       success: true,
       message: "Partner created successfully",
@@ -73,14 +77,17 @@ exports.createPartner = async (req, res) => {
 // ==========================
 exports.updatePartner = async (req, res) => {
   try {
-    const updatedPartner = await Partner.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+   const updatedPartner = await Partner.findOneAndUpdate(
+  {
+    _id: req.params.id,
+    user: req.user.id,
+  },
+  req.body,
+  {
+    new: true,
+    runValidators: true,
+  }
+);
 
     if (!updatedPartner) {
       return res.status(404).json({
@@ -108,8 +115,10 @@ exports.updatePartner = async (req, res) => {
 // ==========================
 exports.deletePartner = async (req, res) => {
   try {
-    const deletedPartner = await Partner.findByIdAndDelete(req.params.id);
-
+  const deletedPartner = await Partner.findOneAndDelete({
+  _id: req.params.id,
+  user: req.user.id,
+});
     if (!deletedPartner) {
       return res.status(404).json({
         success: false,

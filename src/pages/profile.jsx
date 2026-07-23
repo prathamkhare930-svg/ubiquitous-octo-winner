@@ -1,206 +1,136 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+
 import PartnerCard from "../components/PartnerCard";
 import { PartnerForm } from "../components/partnerForm";
 
 function Profile() {
-
   const [partners, setPartners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [search, setSearch] = useState("");
+
   const [partnerName, setPartnerName] = useState("");
+  const [partnerLevel, setPartnerLevel] = useState("beginner");
+  const [partnerGoal, setPartnerGoal] = useState("weight-loss");
+  const [partnerCity, setPartnerCity] = useState("");
+
+  const [showPartnerForm, setShowPartnerForm] = useState(false);
   const [editingPartner, setEditingPartner] = useState(null);
 
-const [partnerLevel, setPartnerLevel] =
-  useState("beginner");
-
-const [partnerGoal, setPartnerGoal] =
-  useState("weight-loss");
-
-const [partnerCity, setPartnerCity] =
-  useState("");
-
-const [showPartnerForm, setShowPartnerForm] =
-  useState(false);
+  // ===========================
+  // FETCH PARTNERS
+  // ===========================
 
   const fetchPartners = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const token = localStorage.getItem("token");
+      const response = await API.get("/partners");
 
-    const response = await axios.get(
-      "http://localhost:5000/api/partners",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      setPartners(response.data.partners);
+    } catch (err) {
+      console.log(err);
+      setError("Failed to fetch partners");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    setPartners(response.data.partners);
-  } catch (err) {
-    console.log(err);
-    setError("Failed to fetch partners");
-  } finally {
-    setLoading(false);
-  }
-};
-
-useEffect(() => {
-  fetchPartners();
-}, []);
- const handleAddPartner = async (partnerData) => {
-  try {
-    const token = localStorage.getItem("token");
-
-    await axios.post(
-      "http://localhost:5000/api/partners",
-      partnerData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
+  useEffect(() => {
     fetchPartners();
+  }, []);
 
-    setPartnerName("");
-    setPartnerLevel("beginner");
-    setPartnerGoal("weight-loss");
-    setPartnerCity("");
-    setShowPartnerForm(false);
+  // ===========================
+  // ADD PARTNER
+  // ===========================
 
-  } catch (err) {
-    console.log(err);
-  }
-};
-const handleEditClick = (partner) => {
-  setEditingPartner(partner);
+  const handleAddPartner = async (partnerData) => {
+    try {
+      await API.post("/partners", partnerData);
 
-  setPartnerName(partner.name);
-  setPartnerLevel(partner.fitnessLevel);
-  setPartnerGoal(partner.goal);
-  setPartnerCity(partner.city);
+      fetchPartners();
 
-  setShowPartnerForm(true);
-};
-const handleSaveEdit = async (partnerData) => {
-  try {
-    const token = localStorage.getItem("token");
+      setPartnerName("");
+      setPartnerLevel("beginner");
+      setPartnerGoal("weight-loss");
+      setPartnerCity("");
 
-    await axios.put(
-      `http://localhost:5000/api/partners/${editingPartner._id}`,
-      partnerData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      setShowPartnerForm(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    fetchPartners();
+  // ===========================
+  // EDIT
+  // ===========================
 
-    setEditingPartner(null);
-    setPartnerName("");
-    setPartnerLevel("beginner");
-    setPartnerGoal("weight-loss");
-    setPartnerCity("");
-    setShowPartnerForm(false);
+  const handleEditClick = (partner) => {
+    setEditingPartner(partner);
 
-    alert("Partner Updated Successfully!");
-  } catch (err) {
-    console.log(err);
-  }
-};
-const handleDeletePartner = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
+    setPartnerName(partner.name);
+    setPartnerLevel(partner.fitnessLevel);
+    setPartnerGoal(partner.goal);
+    setPartnerCity(partner.city);
 
-    await axios.delete(
-      `http://localhost:5000/api/partners/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    setShowPartnerForm(true);
+  };
 
-    fetchPartners();
-  } catch (err) {
-    console.log(err);
-  }
-};
-  return (
-    <div className="min-h-screen bg-black text-white p-10">
+  const handleSaveEdit = async (partnerData) => {
+    try {
+      await API.put(
+        `/partners/${editingPartner._id}`,
+        partnerData
+      );
 
-      <h1 className="text-5xl font-bold text-green-400 text-center">
-        Gym Partners
-      </h1>
-      <button
-  onClick={() => setShowPartnerForm(true)}
-  className="mt-6 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl font-semibold"
->
-  + Add Partner
-</button>
-{
-  showPartnerForm && (
-    <PartnerForm
-      partnerName={partnerName}
-      setPartnerName={setPartnerName}
+      fetchPartners();
 
-      partnerLevel={partnerLevel}
-      setPartnerLevel={setPartnerLevel}
+      setEditingPartner(null);
 
-      partnerGoal={partnerGoal}
-      setPartnerGoal={setPartnerGoal}
+      setPartnerName("");
+      setPartnerLevel("beginner");
+      setPartnerGoal("weight-loss");
+      setPartnerCity("");
 
-      partnerCity={partnerCity}
-      setPartnerCity={setPartnerCity}
+      setShowPartnerForm(false);
 
-      editingPartner={ !! editingPartner}
+      alert("Partner Updated Successfully!");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-     handleAddPartner={
-  editingPartner
-    ? handleSaveEdit
-    : handleAddPartner
-}
-    />
-  )
-}
+  // ===========================
+  // DELETE
+  // ===========================
 
-      <input
-        type="text"
-        placeholder="Search Partner..."
-        className="mt-8 w-full p-4 rounded-xl bg-gray-800 border border-gray-700"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+  const handleDeletePartner = async (id) => {
+    try {
+      await API.delete(`/partners/${id}`);
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+      fetchPartners();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-        {filteredPartners.length === 0 ? (
-          <h2>No Partners Found</h2>
-        ) : (
-          filteredPartners.map((partner) => (
-            <PartnerCard
-  key={partner._id}
-  name={partner.name}
-  fitnessLevel={partner.fitnessLevel}
-  goal={partner.goal}
-  city={partner.city}
-  onEdit={() => handleEditClick(partner)}
-  onDelete={() => handleDeletePartner(partner._id)}
-/>
-          ))
-        )}
+  // ===========================
+  // SEARCH
+  // ===========================
 
-      </div>
-
-    </div>
+  const filteredPartners = partners.filter((partner) =>
+    partner.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  // ===========================
+
+   return (
+  <h1 style={{ color: "white", fontSize: "50px" }}>
+    PROFILE WORKING
+  </h1>
+);
 }
 
 export default Profile;
