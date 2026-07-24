@@ -4,22 +4,24 @@ const Partner = require("../models/Partner");
 // GET ALL PARTNERS
 // ==========================
 exports.getAllPartners = async (req, res) => {
+  console.log(req.user);
   try {
-   const partners = await Partner.find({
-    user: req.user.id,
-});
-
+   const partners = await Partner.find();
+console.log(partners);
     res.json({
       success: true,
       partners,
     });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching partners",
-      error: error.message,
-    });
-  }
+  }catch (error) {
+  console.log("===== GET ALL PARTNERS ERROR =====");
+  console.log(error);
+
+  res.status(500).json({
+    success: false,
+    message: "Error fetching partners",
+    error: error.message,
+  });
+}
 };
 
 // ==========================

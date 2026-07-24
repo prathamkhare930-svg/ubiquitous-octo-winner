@@ -1,27 +1,14 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
-
 import PartnerCard from "../components/PartnerCard";
-import { PartnerForm } from "../components/partnerForm";
 
 function Profile() {
   const [partners, setPartners] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
+  const [filteredPartners, setFilteredPartners] = useState([]);
   const [search, setSearch] = useState("");
 
-  const [partnerName, setPartnerName] = useState("");
-  const [partnerLevel, setPartnerLevel] = useState("beginner");
-  const [partnerGoal, setPartnerGoal] = useState("weight-loss");
-  const [partnerCity, setPartnerCity] = useState("");
-
-  const [showPartnerForm, setShowPartnerForm] = useState(false);
-  const [editingPartner, setEditingPartner] = useState(null);
-
-  // ===========================
-  // FETCH PARTNERS
-  // ===========================
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const fetchPartners = async () => {
     try {
@@ -30,6 +17,7 @@ function Profile() {
       const response = await API.get("/partners");
 
       setPartners(response.data.partners);
+      setFilteredPartners(response.data.partners);
     } catch (err) {
       console.log(err);
       setError("Failed to fetch partners");
@@ -42,95 +30,64 @@ function Profile() {
     fetchPartners();
   }, []);
 
-  // ===========================
-  // ADD PARTNER
-  // ===========================
+  useEffect(() => {
+    const filtered = partners.filter((partner) =>
+      partner.name.toLowerCase().includes(search.toLowerCase())
+    );
 
-  const handleAddPartner = async (partnerData) => {
-    try {
-      await API.post("/partners", partnerData);
+    setFilteredPartners(filtered);
+  }, [search, partners]);
 
-      fetchPartners();
+  if (loading) {
+    return (
+      <h1 className="text-white text-center text-4xl mt-10">
+        Loading...
+      </h1>
+    );
+  }
 
-      setPartnerName("");
-      setPartnerLevel("beginner");
-      setPartnerGoal("weight-loss");
-      setPartnerCity("");
+  if (error) {
+    return (
+      <h1 className="text-red-500 text-center text-3xl mt-10">
+        {error}
+      </h1>
+    );
+  }
 
-      setShowPartnerForm(false);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  return (
+    <div className="min-h-screen bg-black text-white p-10">
 
-  // ===========================
-  // EDIT
-  // ===========================
+      <h1 className="text-5xl font-bold text-green-400 text-center">
+        Gym Partners
+      </h1>
 
-  const handleEditClick = (partner) => {
-    setEditingPartner(partner);
+      <input
+        type="text"
+        placeholder="Search Partner..."
+        className="mt-8 w-full p-4 rounded-xl bg-gray-800 border border-gray-700"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
-    setPartnerName(partner.name);
-    setPartnerLevel(partner.fitnessLevel);
-    setPartnerGoal(partner.goal);
-    setPartnerCity(partner.city);
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
 
-    setShowPartnerForm(true);
-  };
+        {filteredPartners.length === 0 ? (
+          <h2>No Partners Found</h2>
+        ) : (
+          filteredPartners.map((partner) => (
+            <PartnerCard
+              key={partner._id}
+              name={partner.name}
+              fitnessLevel={partner.fitnessLevel}
+              goal={partner.goal}
+              city={partner.city}
+            />
+          ))
+        )}
 
-  const handleSaveEdit = async (partnerData) => {
-    try {
-      await API.put(
-        `/partners/${editingPartner._id}`,
-        partnerData
-      );
-
-      fetchPartners();
-
-      setEditingPartner(null);
-
-      setPartnerName("");
-      setPartnerLevel("beginner");
-      setPartnerGoal("weight-loss");
-      setPartnerCity("");
-
-      setShowPartnerForm(false);
-
-      alert("Partner Updated Successfully!");
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // ===========================
-  // DELETE
-  // ===========================
-
-  const handleDeletePartner = async (id) => {
-    try {
-      await API.delete(`/partners/${id}`);
-
-      fetchPartners();
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // ===========================
-  // SEARCH
-  // ===========================
-
-  const filteredPartners = partners.filter((partner) =>
-    partner.name.toLowerCase().includes(search.toLowerCase())
+      </div>
+    </div>
   );
-
-  // ===========================
-
-   return (
-  <h1 style={{ color: "white", fontSize: "50px" }}>
-    PROFILE WORKING
-  </h1>
-);
 }
 
 export default Profile;
